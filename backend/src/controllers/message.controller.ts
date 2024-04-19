@@ -2,6 +2,7 @@ import { Response } from "express";
 import Conversation from "../models/conversation.model";
 import Message from "../models/message.model";
 import { IGetUserAuthInfoRequest } from "../types/express";
+import { getReciverSocketId, io } from "../../socket/socket";
 
 export const sendMessage = async (
   req: IGetUserAuthInfoRequest,
@@ -33,6 +34,12 @@ export const sendMessage = async (
     //await conversation.save();
     //await newMessage.save();
     await Promise.all([conversation.save(), newMessage.save()]);
+
+    const receiverSocketId = getReciverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
+
     return res.status(201).json(newMessage);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -51,7 +58,7 @@ export const getMessages = async (
     }).populate("messages");
 
     if (!conversation) return res.status(200).json([]);
-    const messages = conversation.messages
+    const messages = conversation.messages;
     res.status(200).json(messages);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });

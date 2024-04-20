@@ -1,5 +1,4 @@
 
-```markdown
 # Proyecto Chat en Tiempo Real MERN APP
 
 ## Instalación
@@ -13,7 +12,7 @@ git clone https://github.com/LeonDavisCoropuna/chat-mern-ts.git
 2. Navega al directorio del proyecto:
 
 ```bash
-cd NombreDelProyecto
+cd chat-mern-ts
 ```
 
 3. Ejecuta el comando siguiente para iniciar la aplicación:

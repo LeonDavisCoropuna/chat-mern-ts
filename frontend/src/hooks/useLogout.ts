@@ -10,7 +10,7 @@ export const useLogout = () => {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-      const data = await res.json();
+      await res.json();
       localStorage.removeItem("chat-user");
       setAuthUser(null);
     } catch (error) {

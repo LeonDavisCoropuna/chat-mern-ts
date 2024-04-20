@@ -4,7 +4,7 @@ import { Socket, io } from "socket.io-client";
 
 interface SocketContextType {
   socket: Socket | undefined;
-  onlineUsers: string[]; // Define el tipo adecuado para onlineUsers
+  onlineUsers: string[]; 
 }
 
 export const SocketConext = createContext<SocketContextType>({
@@ -12,29 +12,30 @@ export const SocketConext = createContext<SocketContextType>({
   onlineUsers: [],
 });
 export const useSocketContext = () => {
-    return useContext(SocketConext);
-  };
-  
+  return useContext(SocketConext);
+};
+
 export const SocketContextProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
   const [socket, setSocket] = useState<Socket | undefined>();
-  const [onlineUsers, setOnlineUsers] = useState<string[]>([]); // Define el tipo adecuado para onlineUsers
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const { authUser } = useAuthContext();
 
   useEffect(() => {
     if (authUser) {
-      const socket = io("http://localhost:8000",{
-        query:{
-            userId: authUser._id
-        }
+      const socket = io("http://backend:5000", {
+        transports: ["websocket"],
+        query: {
+          userId: authUser._id,
+        },
       });
       setSocket(socket);
-      socket.on("getOnlineUsers",(users: string[]) => {
-        setOnlineUsers(users)
-      })
+      socket.on("getOnlineUsers", (users: string[]) => {
+        setOnlineUsers(users);
+      });
       return () => {
         socket.close();
       };

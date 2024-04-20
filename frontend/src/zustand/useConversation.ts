@@ -1,17 +1,17 @@
 import { create } from "zustand";
 import { User } from "../models/User";
-import { Message } from "../models/Message";
+import { IMessage } from "../models/Message";
 
 // Define una interfaz para el estado del conversación
 interface ConversationState {
   selectedConversation: User | null; // Define el tipo adecuado para selectedConversation
-  messages: Message[]; // Define el tipo adecuado para messages
+  messages: IMessage[]; // Define el tipo adecuado para messages
 }
 
 // Define una interfaz para las funciones que modificarán el estado
 interface ConversationActions {
   setSelectedConversation: (conversation: User | null) => void; // Define el tipo adecuado para setSelectedConversation
-  setMessages: (messages: Message[]) => void; // Define el tipo adecuado para setMessages
+  setMessages: (messages: IMessage[]) => void; // Define el tipo adecuado para setMessages
 }
 
 // Combina ambas interfaces para definir el estado completo y las funciones

@@ -1,4 +1,5 @@
-import express, { Express, Request, Response } from "express";
+import express from "express";
+import cors from "cors"; // Importa el middleware cors
 import dotenv from "dotenv";
 import authRoutes from "./src/routes/auth.routes";
 import messageRoutes from "./src/routes/message.routes";
@@ -11,6 +12,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors()); 
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);

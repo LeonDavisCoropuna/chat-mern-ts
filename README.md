@@ -15,7 +15,15 @@ git clone https://github.com/LeonDavisCoropuna/chat-mern-ts.git
 cd chat-mern-ts
 ```
 
-3. Ejecuta el comando siguiente para iniciar la aplicación:
+3. Añade las variables de entorno en un archivo `.env` ejemplo:
+
+```bash
+PORT=5000
+MONGO_DB_URI=mongo_db_url
+JWT_SECRET=anything
+NODE_ENV=development   
+```
+4. Ejecuta el comando siguiente para iniciar la aplicación:
 
 ```bash
 docker-compose up

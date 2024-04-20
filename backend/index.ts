@@ -7,7 +7,9 @@ import cookieParser from "cookie-parser";
 import connectToMongoDB from "./src/db/connectiondb";
 import userRoutes from "./src/routes/user.routes";
 import { app, server } from "./socket/socket";
-dotenv.config();
+dotenv.config({
+  path: "../.env"
+});
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());

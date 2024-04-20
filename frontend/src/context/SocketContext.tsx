@@ -26,7 +26,7 @@ export const SocketContextProvider = ({
 
   useEffect(() => {
     if (authUser) {
-      const socket = io("http://backend:5000", {
+      const socket = io("http://localhost:5000", {
         transports: ["websocket"],
         query: {
           userId: authUser._id,

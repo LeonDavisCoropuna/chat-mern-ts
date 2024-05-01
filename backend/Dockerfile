@@ -51,7 +51,10 @@ WORKDIR /app/backend
 
 COPY --from=BUILD_IMAGE /app/backend/dist /app/backend/dist
 COPY package.json .
-
+ENV PORT: 5000
+ENV NODE_ENV: prod
+ENV MONGO_DB_URI: mongodb+srv://systemR2:8DRKGWP16bRvNRzM@cluster0.gta3o43.mongodb.net/chat-app-db
+ENV JWT_SECRET: FZJHE0Z4cF/rvqp4IAGWTp8y1AQTGSGUxetBksUBpAI=
 RUN npm install --only=production
 
 EXPOSE 5000

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { UserSignUp } from "../models/UserSignUp";
 import toast from "react-hot-toast";
 import { useAuthContext } from "../context/AuthContext";
+import axiosIntance from "../config/axios";
+
 export interface Response {
   loading: boolean;
   signup: (inputs: UserSignUp) => Promise<void>;
@@ -16,14 +18,7 @@ export const useSignUp = (): Response => {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(inputs),
-      });
-      const data = await res.json();
+      const { data } = await axiosIntance.post("/api/auth/signup", inputs);
       localStorage.setItem("chat-user", JSON.stringify(data));
       setAuthUser(data);
     } catch (error) {

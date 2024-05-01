@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
+import axiosIntance from "../config/axios";
 
 export const useLogout = () => {
   const [loading, setLoading] = useState(false);
   const { setAuthUser } = useAuthContext();
   const logout = async () => {
     try {
-      const res = await fetch("/api/auth/logout", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-      await res.json();
+      await axiosIntance.get("/api/auth/logout")
       localStorage.removeItem("chat-user");
       setAuthUser(null);
     } catch (error) {

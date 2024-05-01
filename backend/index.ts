@@ -7,14 +7,15 @@ import cookieParser from "cookie-parser";
 import connectToMongoDB from "./src/db/connectiondb";
 import userRoutes from "./src/routes/user.routes";
 import { app, server } from "./socket/socket";
-dotenv.config({
-  path: "../.env"
-});
+dotenv.config();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors()); 
+app.use(cors({
+  origin: "http://localhost",
+  credentials: true
+})); 
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);

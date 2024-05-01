@@ -9,7 +9,7 @@ const generateTokenAndSetCookie = (userId: mongoose.Types.ObjectId, res: Respons
     maxAge: 30 * 24 * 60 * 60 * 100,
     httpOnly: true,
     sameSite: "strict",
-    secure: process.env.NODE_ENV !== "development"
+    secure: false
   });
 };
 

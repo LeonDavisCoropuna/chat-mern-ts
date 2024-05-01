@@ -1,6 +1,6 @@
-FROM node:18-alpine as BUILD_IMAGE
+FROM node:18-alpine
 
-WORKDIR /app/react-app
+WORKDIR /app
 
 COPY package.json .
 
@@ -10,17 +10,33 @@ COPY . .
 
 RUN npm run build
 
-FROM node:18-alpine as PRODUCTION_IMAGE
-
-WORKDIR /app/react-app
-
-COPY --from=BUILD_IMAGE /app/react-app/dist /app/react-app/dist
-
 EXPOSE 3000
 
-COPY package.json .
+CMD [ "npm", "run", "preview" ]
 
-COPY vite.config.ts .
-RUN npm install typescript
-CMD ["npm", "run", "preview"]
+# FROM node:18-alpine as BUILD_IMAGE
+
+# WORKDIR /app/react-app
+
+# COPY package.json .
+
+# RUN npm install
+
+# COPY . .
+
+# RUN npm run build
+
+# FROM node:18-alpine as PRODUCTION_IMAGE
+
+# WORKDIR /app/react-app
+
+# COPY --from=BUILD_IMAGE /app/react-app/dist /app/react-app/dist
+
+# EXPOSE 3000
+
+# COPY package.json .
+
+# COPY vite.config.ts .
+# RUN npm install typescript
+# CMD ["npm", "run", "preview"]
 

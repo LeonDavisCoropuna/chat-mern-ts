@@ -1,26 +1,47 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    networks:
-      - app-network
-
   backend:
+    restart: always
     build:
       context: ./backend
       dockerfile: Dockerfile
+    container_name: library_mern_nginx
     ports:
-      - "5000:5000"
+      - 5000:5000
+    environment:
+      PORT: 5000
+      NODE_ENV: prod
+      MONGO_URI: mongodb+srv://systemR2:8DRKGWP16bRvNRzM@cluster0.gta3o43.mongodb.net/chat-app-db
+      JWT_SECRET: FZJHE0Z4cF/rvqp4IAGWTp8y1AQTGSGUxetBksUBpAI=
     networks:
-      - app-network
+      - library-mern-api
+  frontend:
+    restart: always
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: library_mern_frontend
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+    networks:
+      - library-mern-api
+
+  nginx:
+    restart: always
+    depends_on:
+      - backend
+      - frontend
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+     - 8080:80
+    networks:
+     - library-mern-api
 
 networks:
-  app-network:
-    driver: bridge
+   library-mern-api:
+      driver: bridge

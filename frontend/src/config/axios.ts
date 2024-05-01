@@ -1,6 +1,6 @@
 import axios from "axios";
 const instance = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "http://18.224.59.40:5000",
   timeout: 5000,
 
   withCredentials: true,

@@ -12,10 +12,29 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-  origin: "http://localhost",
-  credentials: true
-})); 
+
+const allowedOrigins = [
+  "http://localhost",
+  "http://127.0.0.1",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://18.224.59.40:3000",
+  "http://18.224.59.40:3000",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Permite las solicitudes de cualquier origen si es un origen permitido
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // Habilita el envío de cookies de autenticación
+  })
+);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);

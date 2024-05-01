@@ -56,9 +56,5 @@ RUN npm install --only=production
 
 EXPOSE 5000
 
-ENV PORT=5000
-ENV MONGO_DB_URI="mongodb+srv://systemR2:8DRKGWP16bRvNRzM@cluster0.gta3o43.mongodb.net/chat-app-db"
-ENV JWT_SECRET="FZJHE0Z4cF/rvqp4IAGWTp8y1AQTGSGUxetBksUBpAI="
-ENV NODE_ENV=production   
 
 CMD ["node", "dist/index.js"]   

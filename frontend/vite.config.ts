@@ -14,6 +14,7 @@ export default defineConfig({
   },
   publicDir: 'public',
   server: {
+    
     port: 3000,
     strictPort: true,
     host: true, // Cambiado de true a 'localhost'
@@ -23,6 +24,7 @@ export default defineConfig({
         target: "http://backend:5000", // Utiliza el nombre del servicio 'backend' en lugar de 'localhost'
       },
     },
+    
   },
   
 });

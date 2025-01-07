@@ -22,6 +22,8 @@ PORT=5000
 MONGO_DB_URI=mongo_db_url
 JWT_SECRET=anything
 NODE_ENV=development   
+FRONTEND_URL=http://localhost:3000
+
 ```
 4. Ejecuta el comando siguiente para iniciar la aplicación:
 

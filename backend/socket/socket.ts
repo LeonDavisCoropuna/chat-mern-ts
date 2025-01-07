@@ -7,10 +7,14 @@ const app: Application = express();
 const server: http.Server = http.createServer(app);
 const io: Server = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000","http://localhost","http://18.224.59.40:3000","http://18.224.59.40"], 
+    // Usa la variable de entorno FRONTEND_URL para la URL del frontend
+    origin: [
+      process.env.FRONTEND_URL || "http://localhost", // Si no está definida, por defecto usa localhost
+    ],
     methods: ["POST", "GET"],
   },
 });
+
 
 export const getReciverSocketId = (receiverId: string) => {
   return userSocketMap[receiverId]

@@ -9,7 +9,7 @@ const io: Server = new Server(server, {
   cors: {
     // Usa la variable de entorno FRONTEND_URL para la URL del frontend
     origin: [
-      process.env.FRONTEND_URL || "http://localhost", // Si no está definida, por defecto usa localhost
+      "http://localhost:3000","http://localhost","http://3.12.129.31:3000","http://3.12.129.31"
     ],
     methods: ["POST", "GET"],
   },

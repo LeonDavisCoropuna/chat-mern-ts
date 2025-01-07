@@ -16,8 +16,12 @@ app.use(cookieParser());
 
 // Accede a la variable de entorno FRONTEND_URL
 const allowedOrigins = [
-  process.env.FRONTEND_URL ?? "http://localhost",
-  // Puedes agregar más orígenes si es necesario
+  "http://localhost",
+  "http://127.0.0.1",
+  "http://3.12.129.31",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://3.12.129.31:3000",
 ];
 
 app.use(

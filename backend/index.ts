@@ -40,4 +40,5 @@ app.use("/api/users", userRoutes);
 server.listen(PORT, () => {
   connectToMongoDB();
   console.log(`[server]: Server is running at http://localhost:${PORT}`);
+  console.log(`front url: ${process.env.FRONTEND_URL}`)
 });

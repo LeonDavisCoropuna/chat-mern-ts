@@ -1,6 +1,7 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 
 export interface IUser extends Document {
+  _id: ObjectId; // Definir explícitamente el tipo de _id
   fullname: string;
   username: string;
   password: string;
@@ -8,7 +9,8 @@ export interface IUser extends Document {
   profilePicture: string;
 }
 
-const userSchema = new mongoose.Schema({
+
+const userSchema = new mongoose.Schema<IUser>({
   fullname: {
     type: String,
     required: true,

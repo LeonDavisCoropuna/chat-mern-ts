@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   backend:
     restart: always
@@ -8,12 +6,12 @@ services:
       dockerfile: Dockerfile
     container_name: library_mern_nginx
     ports:
-      - 5000:5000
+      - ${PORT}:${PORT}
     environment:
-      PORT: 5000
-      NODE_ENV: prod
-      MONGO_DB_URI: mongodb+srv://systemR2:8DRKGWP16bRvNRzM@cluster0.gta3o43.mongodb.net/chat-app-db
-      JWT_SECRET: FZJHE0Z4cF/rvqp4IAGWTp8y1AQTGSGUxetBksUBpAI=
+      PORT: ${PORT}
+      NODE_ENV: ${NODE_ENV}
+      MONGO_DB_URI: ${MONGO_DB_URI}
+      JWT_SECRET: ${JWT_SECRET}
     networks:
       - library-mern-api
   frontend:
@@ -28,7 +26,6 @@ services:
       - backend
     networks:
       - library-mern-api
-
   nginx:
     restart: always
     depends_on:
@@ -38,10 +35,9 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     ports:
-     - 80:80
+      - 80:80
     networks:
-     - library-mern-api
-
+      - library-mern-api
 networks:
-   library-mern-api:
-      driver: bridge
+  library-mern-api:
+    driver: bridge

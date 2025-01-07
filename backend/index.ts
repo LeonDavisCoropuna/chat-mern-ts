@@ -15,26 +15,27 @@ app.use(cookieParser());
 
 const allowedOrigins = [
   "http://localhost",
-  "http://127.0.0.1",
-  "http://18.224.59.40",
+  // "http://127.0.0.1",
+  // "http://18.224.59.40",
   "http://localhost:3000",
-  "http://127.0.0.1:3000",
-  "http://18.224.59.40:3000",
+  // "http://127.0.0.1:3000",
+  // "http://18.224.59.40:3000",
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Permite las solicitudes de cualquier origen si es un origen permitido
+      // Asegúrate de que 'origin' no sea nulo o undefined
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, // Habilita el envío de cookies de autenticación
+    credentials: true,  // Asegúrate de que esto esté habilitado si necesitas cookies
   })
 );
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);

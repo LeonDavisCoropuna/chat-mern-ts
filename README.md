@@ -26,7 +26,7 @@ NODE_ENV=development
 4. Ejecuta el comando siguiente para iniciar la aplicación:
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 Esto iniciará los contenedores necesarios para ejecutar la aplicación.

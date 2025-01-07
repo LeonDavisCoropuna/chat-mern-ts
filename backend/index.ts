@@ -16,12 +16,7 @@ app.use(cookieParser());
 
 // Accede a la variable de entorno FRONTEND_URL
 const allowedOrigins = [
-  "http://localhost",
-  "http://127.0.0.1",
-  "http://3.143.116.21",
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-  "http://3.143.116.21:3000",
+  process.env.FRONTEND_URL!
 ];
 
 app.use(
@@ -43,6 +38,6 @@ app.use("/api/users", userRoutes);
 
 server.listen(PORT, () => {
   connectToMongoDB();
-  console.log(`[server]: Server is running at http://localhost:${PORT}`);
+  console.log(`[server]: Server is running at ${process.env.FRONTEND_URL}:${PORT}`);
   console.log(`front url: ${process.env.FRONTEND_URL}`)
 });

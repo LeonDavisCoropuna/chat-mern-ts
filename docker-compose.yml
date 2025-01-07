@@ -21,6 +21,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: library_mern_frontend
+    environment:
+      VITE_API_URL: ${VITE_API_URL}  # Pasar la URL del backend al frontend
     ports:
       - 3000:3000
     depends_on:

@@ -1,23 +1,9 @@
-# FROM node:18-alpine
-
-# WORKDIR /app
-
-# COPY package.json .
-
-# RUN npm install
-
-# COPY . .
-
-# RUN npm run build
-
-# EXPOSE 3000
-
-# CMD [ "npm", "run", "preview" ]
-
-
 FROM node:20.11.1-alpine3.19 AS build
 
 WORKDIR /app
+
+# Copia el archivo .env para que Vite pueda leer las variables
+COPY .env ./
 
 COPY package.json ./
 COPY vite.config.ts ./

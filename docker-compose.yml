@@ -29,6 +29,8 @@ services:
       - backend
     networks:
       - library-mern-api
+    env_file:
+      - .env  # Asegúrate de que este archivo sea el correcto para el frontend
   nginx:
     restart: always
     depends_on:

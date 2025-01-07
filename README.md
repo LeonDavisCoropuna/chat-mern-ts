@@ -1,6 +1,4 @@
-Aquí tienes el README actualizado con las variables de entorno especificadas:
-
-# Proyecto Chat en Tiempo Real MERN APP
+# Proyecto Chat en Tiempo Real MERN APP con Nginx y Docker
 
 ## Instalación
 

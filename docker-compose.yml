@@ -1,36 +1,42 @@
 services:
+  mongo:
+    image: mongo:7.0
+    container_name: library_mern_mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    networks:
+      - library-mern-api
   backend:
     restart: always
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: library_mern_nginx
+    container_name: library_mern_backend
     ports:
-      - ${PORT}:${PORT}
-    environment:
-      PORT: ${PORT}
-      NODE_ENV: ${NODE_ENV}
-      MONGO_DB_URI: ${MONGO_DB_URI}
-      JWT_SECRET: ${JWT_SECRET}
-      FRONTEND_URL: ${FRONTEND_URL}
+      - "5000:5000"
+    env_file:
+      - ./backend/.env
     networks:
       - library-mern-api
+
   frontend:
     restart: always
     build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: library_mern_frontend
-    environment:
-      VITE_API_URL: ${VITE_API_URL}  # Pasar la URL del backend al frontend
     ports:
-      - 3000:3000
+      - "3000:3000"
     depends_on:
       - backend
+    env_file:
+      - ./frontend/.env
     networks:
       - library-mern-api
-    env_file:
-      - .env  # Asegúrate de que este archivo sea el correcto para el frontend
+
   nginx:
     restart: always
     depends_on:
@@ -40,9 +46,10 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     ports:
-      - 80:80
+      - "80:80"
     networks:
       - library-mern-api
+
 networks:
   library-mern-api:
     driver: bridge

@@ -11,7 +11,7 @@ const useSendMessage = () => {
     setLoading(true);
     try {
       const { data } = await axiosIntance.post(
-        `/api/messages/send/${selectedConversation?._id}`,
+        `/messages/send/${selectedConversation?._id}`,
         {message}
       );
       if (data.error) throw new Error(data.error);

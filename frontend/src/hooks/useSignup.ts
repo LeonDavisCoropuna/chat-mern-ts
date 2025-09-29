@@ -18,7 +18,7 @@ export const useSignUp = (): Response => {
 
     setLoading(true);
     try {
-      const { data } = await axiosIntance.post("/api/auth/signup", inputs);
+      const { data } = await axiosIntance.post("/auth/signup", inputs);
       localStorage.setItem("chat-user", JSON.stringify(data));
       setAuthUser(data);
     } catch (error) {

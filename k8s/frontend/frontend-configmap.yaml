@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-env
+  namespace: library-mern
+data:
+  # Variables de entorno que tenía tu frontend en .env
+  REACT_APP_API_URL: "http://nginx.library-mern.svc.cluster.local" 
+  # agrega otras si tu .env del frontend las usa
+  VITE_API_URL: "http://backend:5000"

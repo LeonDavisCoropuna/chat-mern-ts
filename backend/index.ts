@@ -19,22 +19,18 @@ const allowedOrigins = [
   process.env.FRONTEND_URL!
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true, // Si usas cookies
-  })
-);
+app.use(cors({
+  origin: "*",  // permite cualquier origen
+  credentials: true
+}));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", message: "Backend is running" });
+});
 
 server.listen(PORT, () => {
   connectToMongoDB();

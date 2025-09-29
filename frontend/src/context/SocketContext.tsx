@@ -4,7 +4,7 @@ import { Socket, io } from "socket.io-client";
 
 interface SocketContextType {
   socket: Socket | undefined;
-  onlineUsers: string[]; 
+  onlineUsers: string[];
 }
 
 export const SocketConext = createContext<SocketContextType>({
@@ -26,11 +26,10 @@ export const SocketContextProvider = ({
 
   useEffect(() => {
     if (authUser) {
-      const socket = io(import.meta.env.VITE_API_URL, {
+      const socket = io(import.meta.env.VITE_SOCKET_URL!, {
+        path: "/socket.io",
         transports: ["websocket"],
-        query: {
-          userId: authUser._id,
-        },
+        query: { userId: authUser._id },
       });
       setSocket(socket);
       socket.on("getOnlineUsers", (users: string[]) => {

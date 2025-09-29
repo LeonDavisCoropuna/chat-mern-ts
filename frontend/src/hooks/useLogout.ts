@@ -7,7 +7,7 @@ export const useLogout = () => {
   const { setAuthUser } = useAuthContext();
   const logout = async () => {
     try {
-      await axiosIntance.get("/api/auth/logout")
+      await axiosIntance.get("/auth/logout")
       localStorage.removeItem("chat-user");
       setAuthUser(null);
     } catch (error) {

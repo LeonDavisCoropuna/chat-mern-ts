@@ -11,7 +11,7 @@ const useLogin = () => {
     if (!success) return;
     setLoading(true);
     try {
-      const { data } = await axiosIntance.post("/api/auth/login", {
+      const { data } = await axiosIntance.post("/auth/login", {
         username,
         password,
       });

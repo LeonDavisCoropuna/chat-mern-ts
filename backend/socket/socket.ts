@@ -6,13 +6,8 @@ const app: Application = express();
 
 const server: http.Server = http.createServer(app);
 const io: Server = new Server(server, {
-  cors: {
-    // Usa la variable de entorno FRONTEND_URL para la URL del frontend
-    origin: [
-      process.env.FRONTEND_URL!
-    ],
-    methods: ["POST", "GET"],
-  },
+  path: "/socket.io",
+  cors: { origin: "*" }, // durante dev, puedes abrirlo
 });
 
 

@@ -11,7 +11,7 @@ const useGetConversations = () => {
     const getConversations = async () => {
       setLoading(true);
       try {
-        const { data } = await axiosInstance.get("/api/users");
+        const { data } = await axiosInstance.get("/users");
         if (data.error) {
           throw new Error(data.error);
         }

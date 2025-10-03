@@ -15,9 +15,16 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: ldavis007/chat-mern-nginx:latest   # cámbialo por tu imagen construida desde ./nginx/Dockerfile
+          image: ldavis007/chat-mern-nginx:latest
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
           livenessProbe:
             httpGet:
               path: /

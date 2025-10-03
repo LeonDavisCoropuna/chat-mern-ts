@@ -15,12 +15,19 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ldavis007/chat-mern-frontend:latest   # cámbialo por tu imagen en DockerHub/GHCR
+          image: ldavis007/chat-mern-frontend:latest   # tu imagen ligera
           ports:
             - containerPort: 3000
           envFrom:
             - configMapRef:
                 name: frontend-env
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
           livenessProbe:
             httpGet:
               path: /

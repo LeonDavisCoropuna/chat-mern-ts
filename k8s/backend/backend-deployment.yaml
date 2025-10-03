@@ -4,7 +4,7 @@ metadata:
   name: backend
   namespace: library-mern
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: backend
@@ -15,12 +15,19 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ldavis007/chat-mern-backend:latest   # cámbialo por tu repo de DockerHub o GHCR
+          image: ldavis007/chat-mern-backend:latest
           ports:
             - containerPort: 5000
           envFrom:
             - secretRef:
                 name: backend-env
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
           livenessProbe:
             httpGet:
               path: /health

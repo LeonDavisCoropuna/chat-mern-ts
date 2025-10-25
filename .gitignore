@@ -24,3 +24,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+infra/gke_gcloud_auth_plugin_cache

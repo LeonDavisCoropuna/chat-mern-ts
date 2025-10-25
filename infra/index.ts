@@ -7,7 +7,7 @@ const name = "helloworld";
 // Create a GKE cluster
 const engineVersion = gcp.container.getEngineVersions().then(v => v.latestMasterVersion);
 const cluster = new gcp.container.Cluster(name, {
-  deletionProtection: false, // <-- ¡AÑADE ESTA LÍNEA!
+  deletionProtection: false,
   initialNodeCount: 2,
   minMasterVersion: engineVersion,
   nodeVersion: engineVersion,

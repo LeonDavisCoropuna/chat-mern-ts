@@ -8,7 +8,7 @@ const name = "helloworld";
 const engineVersion = gcp.container.getEngineVersions().then(v => v.latestMasterVersion);
 const cluster = new gcp.container.Cluster(name, {
   deletionProtection: false,
-  initialNodeCount: 2,
+  initialNodeCount: 3,
   minMasterVersion: engineVersion,
   nodeVersion: engineVersion,
   nodeConfig: {
@@ -76,7 +76,7 @@ const mongoLabels = { appClass: "mongodb" };
 // Create a dedicated namespace for MongoDB
 const mongoNs = new k8s.core.v1.Namespace("mongodb", {
   metadata: {
-    name: "mongodb",
+    name: "library-mern",
     labels: mongoLabels,
   },
 }, { provider: clusterProvider });
@@ -137,12 +137,12 @@ const mongoStatefulSet = new k8s.apps.v1.StatefulSet("mongo", {
           }],
           resources: {
             requests: {
-              memory: "512Mi",
-              cpu: "250m",
+              memory: "256Mi",
+              cpu: "150m",
             },
             limits: {
-              memory: "1Gi",
-              cpu: "500m",
+              memory: "512Mi",
+              cpu: "300m",
             },
           },
         }],
@@ -156,7 +156,7 @@ const mongoStatefulSet = new k8s.apps.v1.StatefulSet("mongo", {
         accessModes: ["ReadWriteOnce"],
         resources: {
           requests: {
-            storage: "10Gi",
+            storage: "1Gi",
           },
         },
         // Para GKE, puedes especificar storage class o usar la por defecto
@@ -205,7 +205,7 @@ const backendSecret = new k8s.core.v1.Secret("backend-env", {
     namespace: appNamespace.metadata.name,
   },
   stringData: {
-    MONGO_DB_URI: pulumi.interpolate`mongodb://admin:mongopassword123@mongo.mongodb.svc.cluster.local:27017/chat-app-db?authSource=admin`,
+    MONGO_DB_URI: pulumi.interpolate`mongodb://admin:mongopassword123@mongo.library-mern.svc.cluster.local:27017/chat-app-db?authSource=admin`,
     JWT_SECRET: "supersecreto",
     PORT: "5000",
     FRONTEND_URL: "http://localhost:3000",
@@ -323,7 +323,6 @@ const backendDeployment = new k8s.apps.v1.Deployment("backend", {
   },
 }, { provider: clusterProvider });
 
-// Horizontal Pod Autoscaler para escalado automático
 // Horizontal Pod Autoscaler para escalado automático (versión corregida)
 const backendHPA = new k8s.autoscaling.v2.HorizontalPodAutoscaler("backend-hpa", {
   metadata: {
@@ -355,7 +354,7 @@ const backendHPA = new k8s.autoscaling.v2.HorizontalPodAutoscaler("backend-hpa",
           name: "memory",
           target: {
             type: "Utilization",
-            averageUtilization: 80,
+            averageUtilization: 60,
           },
         },
       },
@@ -625,12 +624,11 @@ const nginxDeployment = new k8s.apps.v1.Deployment("nginx", {
       spec: {
         containers: [{
           name: "nginx",
-          image: "ldavis007/chat-mern-nginx:latest",  // ✅ TU IMAGEN QUE FUNCIONA
+          image: "ldavis007/chat-mern-nginx:latest",
           ports: [{
             containerPort: 80,
             name: "http",
           }],
-          // ✅ ELIMINAMOS volumeMounts y volumes - tu imagen ya tiene la config
           resources: {
             requests: {
               cpu: "30m",
@@ -662,7 +660,6 @@ const nginxDeployment = new k8s.apps.v1.Deployment("nginx", {
             failureThreshold: 1,
           },
         }],
-        // ✅ SIN volumes - tu imagen ya está preconfigurada
       },
     },
   },

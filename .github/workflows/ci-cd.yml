@@ -94,6 +94,9 @@ jobs:
         tags: |
           ${{ env.DOCKER_REGISTRY }}/chat-mern-frontend:latest
           ${{ env.DOCKER_REGISTRY }}/chat-mern-frontend:${{ github.sha }}
+        build-args: |
+          VITE_API_URL=/api
+          NODE_ENV=production
         cache-from: type=gha
         cache-to: type=gha,mode=max
 

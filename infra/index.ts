@@ -38,7 +38,7 @@ export const clusterName = cluster.name;
 export const kubeconfig = pulumi.
   all([cluster.name, cluster.endpoint, cluster.masterAuth]).
   apply(([name, endpoint, masterAuth]) => {
-    const context = `${gcp.config.project}_${gcp.config.zone}_${name}`;
+    const context = `${gcpProject}_${gcpZone}_${name}`;
     return `apiVersion: v1
 clusters:
 - cluster:
@@ -62,12 +62,17 @@ users:
       installHint: Install gke-gcloud-auth-plugin for use with kubectl by following
         https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
       provideClusterInfo: true
+      env:
+      - name: USE_GKE_GCLOUD_AUTH_PLUGIN
+        value: "True"
 `;
   });
 
 // Create a Kubernetes provider instance that uses our cluster from above.
 const clusterProvider = new k8s.Provider(name, {
   kubeconfig: kubeconfig,
+}, {
+  dependsOn: [cluster],
 });
 
 

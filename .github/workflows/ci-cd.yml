@@ -56,6 +56,13 @@ jobs:
     - name: Configure Docker for GCR
       run: gcloud auth configure-docker
 
+    # Instalar el plugin GKE para autenticación con Kubernetes
+    - name: Install GKE Auth Plugin
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
+        echo "USE_GKE_GCLOUD_AUTH_PLUGIN=True" >> $GITHUB_ENV
+
     # Instalar Pulumi CLI
     - name: Install Pulumi CLI
       uses: pulumi/actions@v4

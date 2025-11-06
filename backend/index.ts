@@ -47,6 +47,30 @@ app.get("/api/load-test", async (req, res) => {
   }
 });
 
+// En tu backend (app.ts) - Agrega esta ruta
+app.get("/api/cpu-load", (req, res) => {
+  const duration = parseInt(req.query.duration as string) || 5000; // 5 segundos por defecto
+  const startTime = Date.now();
+  
+  console.log(`🔥 Iniciando carga de CPU por ${duration}ms`);
+  
+  // Carga intensiva de CPU (cálculos matemáticos)
+  let result = 0;
+  for (let i = 0; i < 1000000 * (duration / 1000); i++) {
+    result += Math.sqrt(i) * Math.sin(i) * Math.cos(i);
+  }
+  
+  const endTime = Date.now();
+  const executionTime = endTime - startTime;
+  
+  res.status(200).json({
+    status: "ok",
+    message: `Carga de CPU completada`,
+    duration: `${executionTime}ms`,
+    result: result.toString().substring(0, 10) + "..." // Solo primeros 10 chars
+  });
+});
+
 server.listen(PORT, () => {
   connectToMongoDB();
   console.log(`[server]: Server is running at ${process.env.FRONTEND_URL}:${PORT}`);

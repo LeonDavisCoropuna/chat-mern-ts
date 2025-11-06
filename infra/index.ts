@@ -19,13 +19,62 @@ const engineVersion = gcp.container.getEngineVersions({
 const cluster = new gcp.container.Cluster(name, {
   location: gcpZone,
   deletionProtection: false,
+  // When using removeDefaultNodePool, we still need initialNodeCount
+  removeDefaultNodePool: true,
   initialNodeCount: 2,
   minMasterVersion: engineVersion,
-  nodeVersion: engineVersion,
+  
+  // Deshabilitar Node Auto Provisioning para control más preciso
+  // Solo usaremos el autoscaling del node pool principal
+  clusterAutoscaling: {
+    enabled: false,
+  },
+  
+  // Configuración adicional para optimizar autoscaling
+  addonsConfig: {
+    horizontalPodAutoscaling: {
+      disabled: false,
+    },
+    networkPolicyConfig: {
+      disabled: true,
+    }
+  }
+});
+
+// Create a separate node pool with autoscaling
+const primaryNodePool = new gcp.container.NodePool("primary", {
+  name: "primary-pool",
+  location: gcpZone,
+  cluster: cluster.name,
+  
+  // Configuración de autoscaling del node pool
+  autoscaling: {
+    minNodeCount: 1,
+    maxNodeCount: 4,
+  },
+  
+  // Configuración inicial
+  initialNodeCount: 2,
+  
   nodeConfig: {
+    preemptible: false, // Usar nodos no preemptibles para producción
     machineType: "n1-standard-1",
-    diskSizeGb: 20,  // Reducir disco si es necesario
-    diskType: "pd-standard",  // Cambiar de SSD a estándar
+    diskSizeGb: 20,
+    diskType: "pd-standard",
+    
+    // Labels para identificar el pool
+    labels: {
+      pool: "primary",
+      environment: "production"
+    },
+    
+    // Taints para casos específicos (opcional)
+    // taints: [{
+    //   key: "app",
+    //   value: "production", 
+    //   effect: "NO_SCHEDULE"
+    // }],
+    
     oauthScopes: [
       "https://www.googleapis.com/auth/compute",
       "https://www.googleapis.com/auth/devstorage.read_only",
@@ -33,10 +82,19 @@ const cluster = new gcp.container.Cluster(name, {
       "https://www.googleapis.com/auth/monitoring"
     ],
   },
+  
+  // Configuración de gestión de nodos
+  management: {
+    autoRepair: true,
+    autoUpgrade: true,
+  },
+}, {
+  dependsOn: [cluster],
 });
 
 // Export the Cluster name
 export const clusterName = cluster.name;
+export const primaryNodePoolName = primaryNodePool.name;
 
 // Manufacture a GKE-style kubeconfig
 export const kubeconfig = pulumi.
@@ -717,3 +775,34 @@ export const applicationUrl = nginxService.status.apply(s => {
   }
   return "Pending...";
 });
+
+// Export autoscaling configuration details
+export const autoscalingConfig = {
+  clusterAutoscaling: {
+    enabled: true,
+    maxCpu: 6,
+    maxMemory: 15,
+    nodeAutoProvisioning: true
+  },
+  nodePoolAutoscaling: {
+    primaryPool: {
+      minNodes: 1,
+      maxNodes: 4,
+      autoRepair: true,
+      autoUpgrade: true
+    }
+  },
+  podAutoscaling: {
+    backend: {
+      minReplicas: 1,
+      maxReplicas: 4,
+      targetCpuUtilization: 70,
+      targetMemoryUtilization: 60
+    },
+    frontend: {
+      minReplicas: 1, 
+      maxReplicas: 4,
+      targetCpuUtilization: 60
+    }
+  }
+};

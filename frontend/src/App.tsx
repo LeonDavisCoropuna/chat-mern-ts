@@ -15,19 +15,39 @@ function App() {
       const data = await response.data;
       console.log('Load test response:', data);
     } catch (error) {
-      console.error('Load test failed:', error);  
+      console.error('Load test failed:', error);
     }
   };
 
+  const handleCpuLoad = async () => {
+    console.log('🔥 Iniciando carga de CPU en frontend...');
+    const startTime = Date.now();
+
+    // Carga intensiva en el navegador
+    let result = 0;
+    for (let i = 0; i < 5000000; i++) {
+      result += Math.sqrt(i) * Math.sin(i) * Math.cos(i);
+    }
+
+    const endTime = Date.now();
+    const executionTime = endTime - startTime;
+
+    console.log(`✅ Carga completadaaaaaaa en ${executionTime}ms. Resultado: ${result.toString().slice(0, 10)}`);
+  };
+
+
   return (
     <div className="p-4 h-screen flex items-center justify-center ">
-      {/* Botón simple para load test */}
-      <button 
+      <button
         onClick={handleLoadTest}
       >
         Load Test
       </button>
-      
+      <button
+        onClick={handleCpuLoad}
+      >
+        🔥 CPU Load Test
+      </button>
       <Routes>
         <Route
           path="/"

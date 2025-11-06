@@ -60,8 +60,8 @@ const primaryNodePool = new gcp.container.NodePool("primary", {
   
   // Configuración de autoscaling del node pool
   autoscaling: {
-    minNodeCount: 1,
-    maxNodeCount: 4,
+    minNodeCount: 2,
+    maxNodeCount: 6,
   },
   
   // Configuración inicial
@@ -421,7 +421,7 @@ const backendHPA = new k8s.autoscaling.v2.HorizontalPodAutoscaler("backend-hpa",
       name: backendDeployment.metadata.name,
     },
     minReplicas: 1,
-    maxReplicas: 8,
+    maxReplicas: 16,
     metrics: [
       {
         type: "Resource",
@@ -429,7 +429,7 @@ const backendHPA = new k8s.autoscaling.v2.HorizontalPodAutoscaler("backend-hpa",
           name: "cpu",
           target: {
             type: "Utilization",
-            averageUtilization: 70,
+            averageUtilization: 50,
           },
         },
       },

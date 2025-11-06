@@ -26,4 +26,6 @@ dist-ssr
 *.sw?
 
 infra/gke_gcloud_auth_plugin_cache
-gke_gcloud_auth_plugin_cache
+gke_gcloud_auth_plugin_cache*-key.json
+service-account*.json
+.env

@@ -1,3 +1,5 @@
 config:
   gcp:project: chat-pulimi
   gcp:zone: us-central1-c
+  chat-pulumi:imageTag: latest
+  chat-pulumi:dockerRegistry: ldavis007

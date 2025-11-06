@@ -193,14 +193,18 @@ jobs:
         echo "=== Pulumi Stack Outputs ==="
         cat outputs.json
         
-        # Verificar pods y servicios
-        gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+        # Obtener el nombre del cluster y la zona desde Pulumi outputs
+        CLUSTER_NAME=$(pulumi stack output clusterName)
+        ZONE=$(pulumi stack output deployedZone)
+        
+        # Verificar pods y servicios usando las credenciales correctas
+        gcloud container clusters get-credentials "$CLUSTER_NAME" --zone "$ZONE"
         kubectl get pods -n library-mern
         kubectl get services -n library-mern
         
-        # Intentar obtener IP externa si existe
-        EXTERNAL_IP=$(kubectl get service nginx -n library-mern -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "Pending")
-        echo "Application URL: http://$EXTERNAL_IP"
+        # Mostrar la URL de la aplicación desde Pulumi outputs
+        APPLICATION_URL=$(pulumi stack output applicationUrl)
+        echo "✅ Application URL: $APPLICATION_URL"
       env:
         PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 

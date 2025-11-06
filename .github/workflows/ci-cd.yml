@@ -51,17 +51,21 @@ jobs:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
 
     - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        install_components: 'gke-gcloud-auth-plugin'
 
     - name: Configure Docker for GCR
       run: gcloud auth configure-docker
 
-    # Instalar el plugin GKE para autenticación con Kubernetes
-    - name: Install GKE Auth Plugin
+    # Configurar el plugin GKE para autenticación con Kubernetes
+    - name: Setup GKE Auth Plugin
       run: |
-        sudo apt-get update
-        sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
+        # El plugin ya viene incluido en las versiones más recientes de gcloud
+        # Solo necesitamos habilitar la variable de entorno
         echo "USE_GKE_GCLOUD_AUTH_PLUGIN=True" >> $GITHUB_ENV
+        # Verificar que gcloud está funcionando
+        gcloud version
 
     # Instalar Pulumi CLI
     - name: Install Pulumi CLI

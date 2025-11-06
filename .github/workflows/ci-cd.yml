@@ -9,7 +9,7 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   GKE_CLUSTER: helloworld
-  GKE_ZONE: us-central1-c
+  GKE_ZONE: us-east1-b
   DOCKER_REGISTRY: ldavis007
   PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
@@ -133,7 +133,7 @@ jobs:
         
         # Configurar provider de GCP
         pulumi config set gcp:project chat-pulimi
-        pulumi config set gcp:zone ${{ env.GKE_ZONE }}
+        pulumi config set gcp:location ${{ env.GKE_ZONE }}
         
         # Configurar variables del proyecto
         pulumi config set imageTag ${{ github.sha }}
@@ -159,7 +159,7 @@ jobs:
         
         pulumi stack select prod || pulumi stack init prod
         pulumi config set gcp:project chat-pulimi
-        pulumi config set gcp:zone ${{ env.GKE_ZONE }}
+        pulumi config set gcp:location ${{ env.GKE_ZONE }}
         pulumi config set imageTag ${{ github.sha }}
         pulumi config set dockerRegistry ${{ env.DOCKER_REGISTRY }}
         

@@ -27,7 +27,7 @@ const cluster = new gcp.container.Cluster(name, {
   // Deshabilitar Node Auto Provisioning para control más preciso
   // Solo usaremos el autoscaling del node pool principal
   clusterAutoscaling: {
-    enabled: false,
+    enabled: true,
   },
   
   // Configuración adicional para optimizar autoscaling

@@ -2,9 +2,12 @@ import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 
+// Get configuration values from Pulumi config
 const config = new pulumi.Config();
 const imageTag = config.get("imageTag") || "latest";
 const dockerRegistry = config.get("dockerRegistry") || "ldavis007";
+const gcpProject = config.get("gcp:project") || "chat-pulimi";
+const gcpZone = config.get("gcp:zone") || "us-central1-c";
 
 const name = "helloworld";
 
@@ -12,9 +15,9 @@ const name = "helloworld";
 const engineVersion = gcp.container.getEngineVersions().then(v => v.latestMasterVersion);
 const cluster = new gcp.container.Cluster(name, {
   deletionProtection: false,
-  // Remover initialNodeCount para usar node pools
-  removeDefaultNodePool: true,
+  initialNodeCount: 2,
   minMasterVersion: engineVersion,
+  nodeVersion: engineVersion,
   nodeConfig: {
     machineType: "n1-standard-1",
     diskSizeGb: 20,  // Reducir disco si es necesario
@@ -28,34 +31,8 @@ const cluster = new gcp.container.Cluster(name, {
   },
 });
 
-// Create Node Pool with autoscaling
-const nodePool = new gcp.container.NodePool("primary", {
-  cluster: cluster.name,
-  initialNodeCount: 1,
-  autoscaling: {
-    minNodeCount: 1,
-    maxNodeCount: 5,
-  },
-  nodeConfig: {
-    machineType: "n1-standard-1",
-    diskSizeGb: 20,
-    diskType: "pd-standard",
-    oauthScopes: [
-      "https://www.googleapis.com/auth/compute",
-      "https://www.googleapis.com/auth/devstorage.read_only", 
-      "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/monitoring"
-    ],
-  },
-  management: {
-    autoRepair: true,
-    autoUpgrade: true,
-  },
-});
-
 // Export the Cluster name
 export const clusterName = cluster.name;
-export const nodePoolName = nodePool.name;
 
 // Manufacture a GKE-style kubeconfig
 export const kubeconfig = pulumi.
@@ -236,10 +213,10 @@ const backendSecret = new k8s.core.v1.Secret("backend-env", {
   },
   stringData: {
     MONGO_DB_URI: pulumi.interpolate`mongodb://admin:mongopassword123@mongo.library-mern.svc.cluster.local:27017/chat-app-db?authSource=admin`,
-    JWT_SECRET: "supersecreto",
+    JWT_SECRET: config.get("jwtSecret") || "supersecreto",
     PORT: "5000",
-    FRONTEND_URL: "http://localhost:3000",
-    NODE_ENV: "development"
+    FRONTEND_URL: config.get("frontendUrl") || "http://localhost:3000",
+    NODE_ENV: config.get("nodeEnv") || "production"
   },
 }, { provider: clusterProvider });
 
@@ -448,9 +425,9 @@ const frontendConfigMap = new k8s.core.v1.ConfigMap("frontend-env", {
   },
   data: {
     // Usar rutas relativas para el proxy
-    REACT_APP_API_URL: "/api",
-    VITE_API_URL: "/api",
-    NODE_ENV: "production"
+    REACT_APP_API_URL: config.get("apiUrl") || "/api",
+    VITE_API_URL: config.get("apiUrl") || "/api",
+    NODE_ENV: config.get("nodeEnv") || "production"
   },
 }, { provider: clusterProvider });
 
@@ -714,7 +691,20 @@ const nginxService = new k8s.core.v1.Service("nginx", {
 }, { provider: clusterProvider });
 
 // Export NGINX details
-export const backendServiceIP = backendService.status.loadBalancer.ingress[0].ip;
-export const frontendServiceIP = frontendService.status.loadBalancer.ingress[0].ip;
-export const nginxServiceIP = nginxService.status.loadBalancer.ingress[0].ip;
+export const nginxServiceIP = nginxService.status.apply(s => s.loadBalancer.ingress[0].ip);
 export const nginxServiceName = nginxService.metadata.name;
+
+// Export configuration values used by CI/CD
+export const deployedImageTag = imageTag;
+export const deployedRegistry = dockerRegistry;
+export const deployedProject = gcpProject;
+export const deployedZone = gcpZone;
+
+// Export application URL
+export const applicationUrl = nginxService.status.apply(s => {
+  const ingress = s.loadBalancer.ingress;
+  if (ingress && ingress.length > 0 && ingress[0].ip) {
+    return `http://${ingress[0].ip}`;
+  }
+  return "Pending...";
+});

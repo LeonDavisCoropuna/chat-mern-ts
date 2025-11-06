@@ -6,16 +6,19 @@ WORKDIR /app
 ARG VITE_API_URL=/api
 ARG NODE_ENV=production
 
-# Establecer variables de entorno para el build
-ENV VITE_API_URL=$VITE_API_URL
-ENV NODE_ENV=$NODE_ENV
-
 COPY package.json ./
+COPY package-lock.json* ./
 COPY vite.config.ts ./
 
-RUN npm install
+# Instalar TODAS las dependencias (incluyendo devDependencies) 
+# Forzar instalación de devDependencies incluso en producción
+RUN npm ci --include=dev
 
-ENV PATH /app/node_modules/.bin:$PATH
+ENV PATH="/app/node_modules/.bin:$PATH"
+
+# Establecer variables de entorno DESPUÉS de instalar dependencias
+ENV VITE_API_URL=$VITE_API_URL \
+    NODE_ENV=$NODE_ENV
 
 COPY . .
 

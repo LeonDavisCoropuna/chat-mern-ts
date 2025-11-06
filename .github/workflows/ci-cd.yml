@@ -193,12 +193,12 @@ jobs:
         echo "=== Pulumi Stack Outputs ==="
         cat outputs.json
         
-        # Obtener el nombre del cluster y la zona desde Pulumi outputs
+        # Obtener el nombre del cluster desde Pulumi outputs
         CLUSTER_NAME=$(pulumi stack output clusterName)
-        ZONE=$(pulumi stack output deployedZone)
         
-        # Verificar pods y servicios usando las credenciales correctas
-        gcloud container clusters get-credentials "$CLUSTER_NAME" --zone "$ZONE"
+        # Intentar obtener credenciales del cluster (gcloud sugerirá la zona correcta si es necesario)
+        gcloud container clusters get-credentials "$CLUSTER_NAME" --zone "${{ env.GKE_ZONE }}" || \
+        gcloud container clusters get-credentials "$CLUSTER_NAME" --zone "us-east1-b"
         kubectl get pods -n library-mern
         kubectl get services -n library-mern
         

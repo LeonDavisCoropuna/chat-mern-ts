@@ -12,8 +12,12 @@ const gcpZone = config.get("gcp:zone") || "us-central1-c";
 const name = "helloworld";
 
 // Create a GKE cluster
-const engineVersion = gcp.container.getEngineVersions().then(v => v.latestMasterVersion);
+const engineVersion = gcp.container.getEngineVersions({
+  location: gcpZone,
+}).then(v => v.latestMasterVersion);
+
 const cluster = new gcp.container.Cluster(name, {
+  location: gcpZone,
   deletionProtection: false,
   initialNodeCount: 2,
   minMasterVersion: engineVersion,

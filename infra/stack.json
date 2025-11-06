@@ -1,0 +1,20 @@
+{
+    "version": 3,
+    "deployment": {
+        "manifest": {
+            "time": "2025-11-06T03:45:04.120048762-05:00",
+            "magic": "335b74c9420f926a641d094ac33db6d65cb2edd262e4fe090f71b915b3e0634d",
+            "version": "v3.206.0"
+        },
+        "secrets_providers": {
+            "type": "service",
+            "state": {
+                "url": "https://api.pulumi.com",
+                "owner": "LeonDavisCoropuna-org",
+                "project": "chat-pulumi",
+                "stack": "dev"
+            }
+        },
+        "metadata": {}
+    }
+}

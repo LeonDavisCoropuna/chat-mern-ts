@@ -152,7 +152,7 @@ jobs:
         
         # Sincronizar estado con la realidad de GCP (en caso de cambios manuales)
         echo "🔄 Sincronizando estado de Pulumi con GCP..."
-        pulumi refresh --yes
+        PULUMI_K8S_DELETE_UNREACHABLE="true" pulumi refresh --yes
         
         # Preview de cambios (solo para logging)
         pulumi preview
@@ -180,7 +180,7 @@ jobs:
         
         # Sincronizar estado para PRs también
         echo "🔄 Sincronizando estado de Pulumi con GCP..."
-        pulumi refresh --yes
+        PULUMI_K8S_DELETE_UNREACHABLE="true" pulumi refresh --yes
         
         # Solo preview para PRs
         pulumi preview

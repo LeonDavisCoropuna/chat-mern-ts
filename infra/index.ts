@@ -410,7 +410,7 @@ const backendHPA = new k8s.autoscaling.v2.HorizontalPodAutoscaler("backend-hpa",
       name: backendDeployment.metadata.name,
     },
     minReplicas: 1,
-    maxReplicas: 4,
+    maxReplicas: 8,
     metrics: [
       {
         type: "Resource",
@@ -795,13 +795,13 @@ export const autoscalingConfig = {
   podAutoscaling: {
     backend: {
       minReplicas: 1,
-      maxReplicas: 4,
+      maxReplicas: 8,
       targetCpuUtilization: 70,
       targetMemoryUtilization: 60
     },
     frontend: {
       minReplicas: 1, 
-      maxReplicas: 4,
+      maxReplicas: 6,
       targetCpuUtilization: 60
     }
   }

@@ -8,20 +8,17 @@ const dockerRegistry = config.get("dockerRegistry") || "ldavis007";
 
 const name = "helloworld";
 
-// Create a GKE cluster (usando zona diferente para evitar cuota)
-const engineVersion = gcp.container.getEngineVersions({
-  location: "us-east1-b"
-}).then(v => v.latestMasterVersion);
+// Create a GKE cluster
+const engineVersion = gcp.container.getEngineVersions().then(v => v.latestMasterVersion);
 const cluster = new gcp.container.Cluster(name, {
-  location: "us-east1-b", // Cambiar zona
   deletionProtection: false,
-  initialNodeCount: 1, // Reducir a 1 nodo para usar menos IPs
+  // Remover initialNodeCount para usar node pools
+  removeDefaultNodePool: true,
   minMasterVersion: engineVersion,
-  nodeVersion: engineVersion,
   nodeConfig: {
-    machineType: "e2-micro", // Usar máquinas más pequeñas
-    diskSizeGb: 10,
-    diskType: "pd-standard",
+    machineType: "n1-standard-1",
+    diskSizeGb: 20,  // Reducir disco si es necesario
+    diskType: "pd-standard",  // Cambiar de SSD a estándar
     oauthScopes: [
       "https://www.googleapis.com/auth/compute",
       "https://www.googleapis.com/auth/devstorage.read_only",
@@ -31,13 +28,39 @@ const cluster = new gcp.container.Cluster(name, {
   },
 });
 
+// Create Node Pool with autoscaling
+const nodePool = new gcp.container.NodePool("primary", {
+  cluster: cluster.name,
+  initialNodeCount: 1,
+  autoscaling: {
+    minNodeCount: 1,
+    maxNodeCount: 5,
+  },
+  nodeConfig: {
+    machineType: "n1-standard-1",
+    diskSizeGb: 20,
+    diskType: "pd-standard",
+    oauthScopes: [
+      "https://www.googleapis.com/auth/compute",
+      "https://www.googleapis.com/auth/devstorage.read_only", 
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring"
+    ],
+  },
+  management: {
+    autoRepair: true,
+    autoUpgrade: true,
+  },
+});
+
 // Export the Cluster name
 export const clusterName = cluster.name;
+export const nodePoolName = nodePool.name;
 
 // Manufacture a GKE-style kubeconfig
 export const kubeconfig = pulumi.
   all([cluster.name, cluster.endpoint, cluster.masterAuth]).
-    apply(([name, endpoint, masterAuth]) => {
+  apply(([name, endpoint, masterAuth]) => {
     const context = `${gcp.config.project}_${gcp.config.zone}_${name}`;
     return `apiVersion: v1
 clusters:

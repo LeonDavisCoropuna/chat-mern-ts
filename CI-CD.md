@@ -102,77 +102,73 @@ env:
 ## Aplicación Desplegada
 
 ### Estado Final de la Aplicación
-![Aplicación Desplegada](docs/ci-cd/app.png)  
-*Aplicación MERN completamente funcional desplegada en GKE, accesible públicamente a través del LoadBalancer.*
+![Aplicación Desplegada](docs/ci-cd/app-deploy-url.png)  
+*Aplicación MERN completamente funcional desplegada en GKE, accesible públicamente mostrando el despliegue correcto en la web.*
 
 **URL de Producción**: http://34.123.66.173  
-**Estado**: ✅ Operacional  
+**Estado**: Operacional  
 **Funcionalidades**: Login, Signup, Chat en tiempo real
 
 ## Análisis Comparativo: Antes y Después del Autoscaling
 
 ### Estado Inicial del Sistema (Antes)
 
-#### Despliegue Inicial del Cluster
-![Despliegue del Cluster](docs/pulumi/deploy.png)  
-*Cluster GKE `helloworld-4273d51` desplegado exitosamente en us-central1-c con configuración inicial de 3 nodos.*
+#### Estado Base del Cluster
+![Estado Base](docs/ci-cd/base.png)  
+*Estado inicial con 2 nodos y un pod por servicio, mostrando la configuración baseline del cluster.*
 
-#### Pods y HPA en Estado de Reposo
-![Pods y HPA en Reposo](docs/pulumi/reposo-pods-hpa.png)  
-*Estado baseline: 1 réplica por deployment, CPU en 0%, HPA inactivo esperando carga.*
-
-#### Consumo de Recursos en Reposo
-![Recursos en Reposo](docs/pulumi/reposo-recursos.png)  
-*Consumo mínimo y eficiente: todos los servicios operando con mínima utilización de CPU (1-5m).*
-
-#### Estado de Nodos sin Carga
-![Nodos en Reposo](docs/pulumi/reposo-nodos.png)  
-*Nodos operando al 6% de CPU cada uno, demostrating consumo eficiente de recursos.*
+#### Workflow de CI/CD Ejecutado
+![Jobs del Workflow](docs/ci-cd/jobs.png)  
+*Trabajos ejecutados exitosamente en el workflow de GitHub Actions, mostrando el proceso completo de CI/CD.*
 
 ### Comportamiento Bajo Carga (Después)
 
-#### Autoescalado de Pods en Acción
-![Autoescalado de Pods](docs/pulumi/carga-pods.png)  
-*Frontend escalando automáticamente a 2 réplicas cuando se detecta carga moderada, demostrando la efectividad del HPA.*
+#### Autoscaling de Nodos y Pods Activado
+![Autoscaling Activado](docs/ci-cd/nodo3.png)  
+*Autoscaling de nodos y autoscaling de pods con HPA en funcionamiento, mostrando el escalado automático del tercer nodo y múltiples replicas de pods.*
 
-#### Distribución Optimizada de Recursos
-![Recursos bajo Carga](docs/pulumi/carga-recursos.png)  
-*Distribución balanceada: Backend con 26m y 25m CPU por réplica, Frontend con 16m CPU, MongoDB estable en 18m CPU.*
+## Proceso de CI/CD - Workflow Execution
 
-#### Escalado Extremo - Máximo Rendimiento
-![Carga Extrema en Pods](docs/pulumi/mucha-carga-pods.png)  
-*Backend alcanzando 134% / 70% de CPU (sobre el umbral), escalando a las 4 réplicas máximas configuradas.*
+### Pipeline de GitHub Actions
 
-#### Resiliencia y Recuperación Automática
-![Recuperación de Pods](docs/pulumi/caso-caida-pods.png)  
-*Sistema demostrando autorecuperación: pods que fallan temporalmente se reinician automáticamente.*
+El workflow de CI/CD ejecuta las siguientes etapas de forma secuencial:
 
-#### Impacto en la Infraestructura de Nodos
-![Carga Extrema en Nodos](docs/pulumi/carga-nodos.png)  
-*Nodos bajo estrés extremo: 22-40% CPU, consumo entre 200m-381m cores, algunos pods requieren reinicio.*
+1. **Setup Phase**: Configuración del entorno con Node.js, Docker y herramientas de GCP
+2. **Build Phase**: Construcción de imágenes Docker para backend, frontend y nginx
+3. **Push Phase**: Subida de imágenes al registro de Docker Hub
+4. **Deploy Phase**: Despliegue de infraestructura usando Pulumi
+5. **Verify Phase**: Verificación de que todos los pods estén ejecutándose correctamente
 
-### Validación del Comportamiento del HPA
+Como se muestra en la imagen jobs.png, todos los trabajos del workflow se ejecutan exitosamente, garantizando un despliegue confiable y automatizado.
 
-| **Escenario** | **Comportamiento Esperado** | **Resultado Obtenido** | **Estado** |
-|---------------|------------------------------|-------------------------|------------|
-| **Reposo** | 1 réplica, mínimo consumo | ✅ Confirmado | ✔️ |
-| **Carga Moderada** | Escalado a 2-3 réplicas | ✅ Frontend a 2 réplicas | ✔️ |
-| **Carga Alta** | Escalado a réplicas máximas | ✅ Backend a 4 réplicas | ✔️ |
-| **Distribución** | Balanceo de carga | ✅ Carga distribuida correctamente | ✔️ |
-| **Resiliencia** | Recuperación automática | ✅ Pods se reinician automáticamente | ✔️ |
+### Resultado Final del Despliegue
 
-## Proceso de CI/CD - Challenges y Soluciones
+La imagen app-deploy-url.png confirma que la aplicación se ha desplegado correctamente y está accesible en la web, demostrando el éxito completo del pipeline de CI/CD. Este resultado representa la culminación de todo el proceso automatizado, desde el código fuente hasta la aplicación funcionando en producción.
 
 ## Autoscaling en Acción
 
-### Escalado Automático de Nodos
+### Evolución del Sistema: Estado Base a Autoscaling Completo
+
+#### Estado Base del Sistema
+La imagen base.png muestra la configuración inicial del cluster:
+- **Nodos**: 2 nodos n1-standard-1 activos
+- **Pods**: 1 pod por servicio (backend, frontend, nginx, mongo)
+- **Recursos**: Utilización mínima y eficiente
+- **HPA**: Configurado pero inactivo debido a la baja carga
+
+#### Escalado Automático Activado
+La imagen nodo3.png demuestra el autoscaling completamente funcional:
+- **Nodos**: Escalado automático a 3 nodos para manejar la carga
+- **Pods**: Múltiples réplicas desplegadas por el HPA
+- **Distribución**: Pods balanceados entre todos los nodos disponibles
+- **Eficiencia**: Sistema optimizado para manejar carga variable
 
 **Comportamiento Observado:**
-- **Estado Inicial**: 2 nodos `n1-standard-1`
-- **Bajo Carga**: Detección automática de recursos insuficientes
-- **Escalado**: Creación automática del 3er nodo
-- **Distribución**: Pods redistribuidos entre los 3 nodos
-- **Optimización**: Mejor balanceo de carga y recursos
+- **Estado Inicial**: 2 nodos con carga mínima
+- **Detección**: HPA detecta aumento en utilización de CPU
+- **Escalado de Pods**: Creación automática de réplicas adicionales
+- **Escalado de Nodos**: Node Pool autoscaling activa el tercer nodo
+- **Distribución**: Kubernetes redistribuye los pods automáticamente
 
 ### Configuración de Autoscaling
 
@@ -280,12 +276,6 @@ PULUMI_ACCESS_TOKEN='pul-...'
   ]
 }
 ```
-
-![Recuperación de Pods](docs/ci-cd/correct-deploy.png) 
-
-![Recuperación de Pods](docs/ci-cd/jobs.png) 
-
-![Recuperación de Pods](docs/ci-cd/logs-ip.png) 
 
 ## Pruebas de Autoscaling
 

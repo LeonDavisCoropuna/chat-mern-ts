@@ -150,6 +150,10 @@ jobs:
         pulumi config set imageTag ${{ github.sha }}
         pulumi config set dockerRegistry ${{ env.DOCKER_REGISTRY }}
         
+        # Sincronizar estado con la realidad de GCP (en caso de cambios manuales)
+        echo "🔄 Sincronizando estado de Pulumi con GCP..."
+        pulumi refresh --yes
+        
         # Preview de cambios (solo para logging)
         pulumi preview
         
@@ -173,6 +177,10 @@ jobs:
         pulumi config set gcp:zone ${{ env.GKE_ZONE }}
         pulumi config set imageTag ${{ github.sha }}
         pulumi config set dockerRegistry ${{ env.DOCKER_REGISTRY }}
+        
+        # Sincronizar estado para PRs también
+        echo "🔄 Sincronizando estado de Pulumi con GCP..."
+        pulumi refresh --yes
         
         # Solo preview para PRs
         pulumi preview

@@ -2,11 +2,18 @@ import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 
+const config = new pulumi.Config();
+const imageTag = config.get("imageTag") || "latest";
+const dockerRegistry = config.get("dockerRegistry") || "ldavis007";
+
 const name = "helloworld";
 
 // Create a GKE cluster
-const engineVersion = gcp.container.getEngineVersions().then(v => v.latestMasterVersion);
+const engineVersion = gcp.container.getEngineVersions({
+  location: "us-central1-a"
+}).then(v => v.latestMasterVersion);
 const cluster = new gcp.container.Cluster(name, {
+  location: "us-central1-a",
   deletionProtection: false,
   initialNodeCount: 3,
   minMasterVersion: engineVersion,
@@ -241,7 +248,7 @@ const backendDeployment = new k8s.apps.v1.Deployment("backend", {
       spec: {
         containers: [{
           name: "backend",
-          image: "ldavis007/chat-mern-backend:latest",
+          image: `${dockerRegistry}/chat-mern-backend:${imageTag}`,
           ports: [{
             containerPort: 5000,
             name: "http",
@@ -452,7 +459,7 @@ const frontendDeployment = new k8s.apps.v1.Deployment("frontend", {
       spec: {
         containers: [{
           name: "frontend",
-          image: "ldavis007/chat-mern-frontend:latest",
+          image: `${dockerRegistry}/chat-mern-frontend:${imageTag}`,
           ports: [{
             containerPort: 3000,
             name: "http",
@@ -624,7 +631,7 @@ const nginxDeployment = new k8s.apps.v1.Deployment("nginx", {
       spec: {
         containers: [{
           name: "nginx",
-          image: "ldavis007/chat-mern-nginx:latest",
+          image: `${dockerRegistry}/chat-mern-nginx:${imageTag}`,
           ports: [{
             containerPort: 80,
             name: "http",
@@ -684,5 +691,7 @@ const nginxService = new k8s.core.v1.Service("nginx", {
 }, { provider: clusterProvider });
 
 // Export NGINX details
-export const nginxServiceIP = nginxService.status.apply(s => s.loadBalancer.ingress[0].ip);
+export const backendServiceIP = backendService.status.loadBalancer.ingress[0].ip;
+export const frontendServiceIP = frontendService.status.loadBalancer.ingress[0].ip;
+export const nginxServiceIP = nginxService.status.loadBalancer.ingress[0].ip;
 export const nginxServiceName = nginxService.metadata.name;

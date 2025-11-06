@@ -24,10 +24,21 @@ const cluster = new gcp.container.Cluster(name, {
   initialNodeCount: 2,
   minMasterVersion: engineVersion,
   
-  // Deshabilitar Node Auto Provisioning para control más preciso
-  // Solo usaremos el autoscaling del node pool principal
+  // Habilitar Cluster Autoscaling con límites de recursos
   clusterAutoscaling: {
     enabled: true,
+    resourceLimits: [
+      {
+        resourceType: "cpu",
+        minimum: 1,
+        maximum: 20,
+      },
+      {
+        resourceType: "memory", 
+        minimum: 1,
+        maximum: 80,
+      },
+    ],
   },
   
   // Configuración adicional para optimizar autoscaling

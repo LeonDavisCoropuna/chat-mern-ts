@@ -4,20 +4,8 @@ import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
 import { useAuthContext } from "./context/AuthContext";
-import axiosInstance from "./config/axios";
 function App() {
   const { authUser } = useAuthContext();
-
-  // Función simple para hacer load test
-  const handleLoadTest = async () => {
-    try {
-      const response = await axiosInstance.get('/load-test');
-      const data = await response.data;
-      console.log('Load test response:', data);
-    } catch (error) {
-      console.error('Load test failed:', error);
-    }
-  };
 
   const handleCpuLoad = async () => {
     console.log('🔥 Iniciando carga de CPU en frontend...');
@@ -39,14 +27,9 @@ function App() {
   return (
     <div className="p-4 h-screen flex items-center justify-center ">
       <button
-        onClick={handleLoadTest}
-      >
-        Load Test
-      </button>
-      <button
         onClick={handleCpuLoad}
       >
-        🔥 CPU Load Test
+        CPU Load Test
       </button>
       <Routes>
         <Route
